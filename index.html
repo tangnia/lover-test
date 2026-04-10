@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>💑 家日记</title>
+    <style>
+        :root {
+            --primary: #ff6b8b;
+            --secondary: #6b8bff;
+            --weekend: #ffb86b;
+            --love: #ff4d8d;
+            --success: #4cd964;
+            --danger: #ff3b30;
+            --warning: #ffcc00;
+            --info: #5ac8fa;
+            --calm: #8e8e93;
+            
+            /* 图表颜色 - 更鲜艳的版本 */
+            --chart-happy: #4cd964;
+            --chart-calm: #5ac8fa;
+            --chart-argue: #ff3b30;
+            --chart-cold: #8e8e93;
+            --chart-love: #ff4d8d;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+        }
+        
+        .container { max-width: 500px; margin: 0 auto; }
+        
+        /* 头部 */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 139, 0.2);
+        }
+        
+        h1 { font-size: 32px; margin-bottom: 8px; }
+        .date { font-size: 16px; opacity: 0.9; }
+        
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        /* 今日记录页面 */
+        .record-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 情绪选择 */
+        .mood-section {
+            margin-bottom: 25px;
+        }
+        
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .mood-option {
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .mood-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .mood-option.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255, 107, 139, 0.1) 0%, rgba(107, 139, 255, 0.1) 100%);
+            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.2);
+        }
+        
+        .mood-option.happy.selected { border-color: var(--success); background: rgba(76, 217, 100, 0.1); }
+        .mood-option.calm.selected { border-color: var(--secondary); background: rgba(107, 139, 255, 0.1); }
+        .mood-option.argue.selected { border-color: var(--danger); background: rgba(255, 59, 48, 0.1); }
+        .mood-option.cold.selected { border-color: var(--calm); background: rgba(142, 142, 147, 0.1); }
+        
+        .mood-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .mood-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .mood-desc {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 亲密选择 */
+        .love-section {
+            margin-bottom: 25px;
+        }
+        
+        .love-options {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .love-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .love-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .love-option.selected {
+            border-color: var(--love);
+            background: rgba(255, 77, 141, 0.1);
+            box-shadow: 0 5px 15px rgba(255, 77, 141, 0.2);
+        }
+        
+        .love-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .love-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* 时间记录 */
+        .time-section {
+            margin-bottom: 25px;
+        }
+        
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .time-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .time-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .time-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .time-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .time-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 139, 0.3);
+        }
+        
+        .time-btn.recorded {
+            background: linear-gradient(135deg, var(--success) 0%, #34c759 100%);
+        }
+        
+        /* 日记输入 */
+        .diary-section {
+            margin-bottom: 25px;
+        }
+        
+        .diary-input {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .diary-input:focus {
+            outline: none;
+            border-color: var(--info);
+            box-shadow: 0 0 0 3px rgba(90, 200, 250, 0.15);
+        }
+        
+        .voice-controls {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .voice-btn {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--info) 0%, #007aff 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .voice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(90, 200, 250, 0.3);
+        }
+        
+        .voice-btn.recording {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff2d55 100%);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+
+        
+        /* 历史记录页面 */
+        .history-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .history-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .history-item.happy { border-left-color: var(--success); }
+        .history-item.calm { border-left-color: var(--secondary); }
+        .history-item.argue { border-left-color: var(--danger); }
+        .history-item.cold { border-left-color: var(--calm); }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .history-date {
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .history-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .mood-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .mood-badge.happy { background: var(--success); }
+        .mood-badge.calm { background: var(--secondary); }
+        .mood-badge.argue { background: var(--danger); }
+        .mood-badge.cold { background: var(--calm); }
+        
+        .history-preview {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* 统计页面 */
+        .stats-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .period-selector {
+            margin-bottom: 20px;
+        }
+        
+        .period-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .period-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .period-tab.active {
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease-out;
+        }
+        
+        @keyframes modalSlide {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* 通知 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--info);
+        }
+        
+        /* 日记内容与评论区分 */
+        .diary-content {
+            background: linear-gradient(135deg, rgba(255, 107, 139, 0.08) 0%, rgba(107, 139, 255, 0.08) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .comment-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .comment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* 筛选器 */
+        .filter-select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--info);
+            box-shadow: 0 0 0 3px rgba(90, 200, 250, 0.15);
+        }
+        
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .mood-grid, .quick-grid, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .love-options {
+                flex-direction: column;
+            }
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-section > div {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>💑 家日记</h1>
+            <div class="date" id="currentDate">2026年4月8日 星期三</div>
+        </div>
+        
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('record')">📝 今日记录</button>
+            <button class="tab" onclick="switchTab('history')">📅 历史记录</button>
+            <button class="tab" onclick="switchTab('stats')">📊 统计</button>
+        </div>
+        
+        <!-- 今日记录标签页 -->
+        <div id="recordTab" class="tab-content">
+            <div class="record-section">
+                <div class="section-title">
+                    <span>😊</span> 今日情绪
+                </div>
+                
+                <div class="mood-section">
+                    <div class="mood-grid">
+                        <div class="mood-option happy" onclick="selectMood('happy')">
+                            <div class="mood-emoji">😊</div>
+                            <div class="mood-name">开心</div>
+                            <div class="mood-desc">愉快的一天</div>
+                        </div>
+                        
+                        <div class="mood-option calm" onclick="selectMood('calm')">
+                            <div class="mood-emoji">😌</div>
+                            <div class="mood-name">平静</div>
+                            <div class="mood-desc">平淡和谐</div>
+                        </div>
+                        
+                        <div class="mood-option argue" onclick="selectMood('argue')">
+                            <div class="mood-emoji">😠</div>
+                            <div class="mood-name">争吵</div>
+                            <div class="mood-desc">有小矛盾</div>
+                        </div>
+                        
+                        <div class="mood-option cold" onclick="selectMood('cold')">
+                            <div class="mood-emoji">🥶</div>
+                            <div class="mood-name">冷战</div>
+                            <div class="mood-desc">关系紧张</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-title">
+                    <span>❤️</span> 亲密时刻
+                </div>
+                
+                <div class="love-section">
+                    <div class="love-options">
+                        <div class="love-option" onclick="selectLove(true)">
+                            <div class="love-emoji">❤️</div>
+                            <div class="love-name">有亲密</div>
+                        </div>
+                        
+                        <div class="love-option" onclick="selectLove(false)">
+                            <div class="love-emoji">💙</div>
+                            <div class="love-name">无亲密</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-title">
+                    <span>⏰</span> 时间记录
+                </div>
+                
+                <div class="time-section">
+                    <div class="time-grid">
+                        <div class="time-card">
+                            <div class="time-label">
+                                <span>🛁</span> 洗澡时间
+                            </div>
+                            <div class="time-value" id="bathTime">未记录</div>
+                            <button class="time-btn" onclick="recordBathTime()">
+                                ⏰ 记录当前时间
+                            </button>
+                        </div>
+                        
+                        <div class="time-card">
+                            <div class="time-label">
+                                <span>🛏️</span> 上床时间
+                            </div>
+                            <div class="time-value" id="bedTime">未记录</div>
+                            <button class="time-btn" onclick="recordBedTime()">
+                                ⏰ 记录当前时间
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-title">
+                    <span>📝</span> 今日日记
+                </div>
+                
+                <div class="diary-section">
+                    <textarea class="diary-input" id="diaryInput" 
+                              placeholder="写下今天的感受、趣事或想说的话..."></textarea>
+                    
+                    <div class="voice-controls">
+                        <button class="voice-btn" id="voiceBtn" onclick="startVoiceInput()">
+                            <span>🎤</span> 语音输入
+                        </button>
+                        <button class="voice-btn" onclick="clearDiary()">
+                            <span>🗑️</span> 清空
+                        </button>
+                    </div>
+                </div>
+                
+
+                
+                <!-- 自动保存状态 -->
+                <div id="autoSaveStatus" style="margin-top: 25px; padding: 15px; text-align: center; font-size: 14px; color: #666; background: linear-gradient(135deg, rgba(255, 107, 139, 0.05) 0%, rgba(107, 139, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(255, 107, 139, 0.1);">
+                    💾 所有更改已自动保存
+                </div>
+            </div>
+        </div>
+        
+        <!-- 历史记录标签页 -->
+        <div id="historyTab" class="tab-content" style="display: none;">
+            <div class="history-section">
+                <div class="section-title">
+                    <span>📅</span> 历史记录
+                </div>
+                
+                <!-- 筛选器 -->
+                <div class="filter-section" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <select id="yearFilter" class="filter-select" onchange="filterHistory()">
+                            <option value="all">所有年份</option>
+                        </select>
+                        
+                        <select id="monthFilter" class="filter-select" onchange="filterHistory()">
+                            <option value="all">所有月份</option>
+                        </select>
+                        
+                        <select id="dayFilter" class="filter-select" onchange="filterHistory()">
+                            <option value="all">所有日期</option>
+                        </select>
+                    </div>
+                    
+                    <div style="font-size: 14px; color: #666;">
+                        点击记录查看详情
+                    </div>
+                </div>
+                
+                <div class="history-list" id="historyList">
+                    <!-- 历史记录会动态加载到这里 -->
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        暂无历史记录，开始记录吧！
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计标签页 -->
+        <div id="statsTab" class="tab-content" style="display: none;">
+            <div class="stats-section">
+                <div class="section-title">
+                    <span>📊</span> 统计
+                </div>
+                
+                <div class="period-selector">
+                    <div class="period-tabs">
+                        <button class="period-tab active" onclick="switchPeriod('month')">📅 月度</button>
+                        <button class="period-tab" onclick="switchPeriod('year')">📈 年度</button>
+                    </div>
+                    
+                    <!-- 年份选择器（只在年度统计显示） -->
+                    <div id="yearSelector" style="display: none; margin-top: 15px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                            <button class="time-btn" onclick="changeYear(-1)" style="padding: 12px 20px; background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);">
+                                ◀ 上一年
+                            </button>
+                            
+                            <div style="font-size: 18px; font-weight: 700; color: #333; min-width: 100px; text-align: center; padding: 12px 20px; background: linear-gradient(135deg, rgba(255, 107, 139, 0.1) 0%, rgba(107, 139, 255, 0.1) 100%); border-radius: 15px;">
+                                <span id="selectedYear">2026</span>年
+                            </div>
+                            
+                            <button class="time-btn" onclick="changeYear(1)" style="padding: 12px 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);">
+                                下一年 ▶
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 月度统计 -->
+                <div id="monthStats" class="stats-period">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthHappyDays">0</div>
+                            <div class="stat-label">本月开心天数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthLoveDays">0</div>
+                            <div class="stat-label">本月亲密次数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthArgueDays">0</div>
+                            <div class="stat-label">本月争吵次数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthRecordDays">0</div>
+                            <div class="stat-label">本月记录天数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="monthChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 年度统计 -->
+                <div id="yearStats" class="stats-period" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="yearHappyDays">0</div>
+                            <div class="stat-label">开心天数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="yearLoveDays">0</div>
+                            <div class="stat-label">亲密次数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="yearArgueDays">0</div>
+                            <div class="stat-label">争吵次数</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value" id="yearRecordDays">0</div>
+                            <div class="stat-label">记录天数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="yearChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+    
+    <!-- 通知 -->
+    <div class="notification" id="notification">
+        <span id="notificationIcon">💾</span>
+        <span id="notificationText">保存成功！</span>
+    </div>
+    
+    <!-- 记录详情模态框 -->
+    <div class="modal" id="recordModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="modalDate" style="margin: 0; font-size: 18px; color: #333;">2026年4月8日 星期三</h3>
+                <button onclick="closeModal()" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border: none; font-size: 20px; cursor: pointer; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                    ✕
+                </button>
+            </div>
+            
+            <div id="modalContent">
+                <!-- 记录详情会动态加载到这里 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let records = [];
+        let currentRecord = {
+            mood: null,
+            love: null,
+            bathTime: null,
+            bedTime: null,
+            diary: '',
+            date: new Date().toISOString().split('T')[0],
+            comments: [] // 新增评论数组
+        };
+        
+        let recognition = null;
+        let isRecording = false;
+        let monthChart = null;
+        let yearChart = null;
+        let selectedYear = new Date().getFullYear();
+        let saveTimer = null;
+        
+        // 筛选变量
+        let filteredRecords = [];
+        let selectedYearFilter = 'all';
+        let selectedMonthFilter = 'all';
+        let selectedDayFilter = 'all';
+        
+        // 初始化
+        function init() {
+            // 设置当前日期
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            
+            // 加载数据
+            loadData();
+            
+            // 如果没有数据，自动生成演示数据（已禁用）
+            // if (records.length === 0) {
+            //     generateDemoData();
+            //     showNotification('📊 已自动生成演示数据，请查看统计图表', 'info');
+            // }
+            
+            // 检查今天是否已有记录
+            checkTodayRecord();
+            
+            // 初始化语音识别
+            initSpeechRecognition();
+            
+            // 初始化筛选器
+            initFilters();
+            
+            // 加载历史记录
+            loadHistory();
+            
+            // 加载月度统计
+            updateMonthStats();
+        }
+        
+        // 加载数据
+        function loadData() {
+            const saved = localStorage.getItem('coupleDiaryAllInOne');
+            if (saved) {
+                records = JSON.parse(saved);
+                
+                // 确保所有记录都有comments数组
+                records.forEach(record => {
+                    if (!record.comments) {
+                        record.comments = [];
+                    }
+                });
+            }
+        }
+        
+        // 保存数据
+        function saveData() {
+            localStorage.setItem('coupleDiaryAllInOne', JSON.stringify(records));
+        }
+        
+        // 检查今天是否已有记录
+        function checkTodayRecord() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayRecord = records.find(r => r.date === today);
+            
+            if (todayRecord) {
+                // 加载已有记录
+                currentRecord = { ...todayRecord };
+                updateUIFromRecord();
+                showNotification('📅 已加载今天的记录', 'info');
+            }
+        }
+        
+        // 更新UI显示记录
+        function updateUIFromRecord() {
+            // 更新情绪选择
+            if (currentRecord.mood) {
+                selectMood(currentRecord.mood);
+            }
+            
+            // 更新亲密选择
+            if (currentRecord.love !== null) {
+                selectLove(currentRecord.love);
+            }
+            
+            // 更新时间显示
+            if (currentRecord.bathTime) {
+                document.getElementById('bathTime').textContent = currentRecord.bathTime;
+                document.querySelector('.time-btn[onclick="recordBathTime()"]').classList.add('recorded');
+                document.querySelector('.time-btn[onclick="recordBathTime()"]').textContent = '✅ 已记录';
+            }
+            
+            if (currentRecord.bedTime) {
+                document.getElementById('bedTime').textContent = currentRecord.bedTime;
+                document.querySelector('.time-btn[onclick="recordBedTime()"]').classList.add('recorded');
+                document.querySelector('.time-btn[onclick="recordBedTime()"]').textContent = '✅ 已记录';
+            }
+            
+            // 更新日记
+            if (currentRecord.diary) {
+                document.getElementById('diaryInput').value = currentRecord.diary;
+            }
+        }
+        
+        // 选择情绪
+        function selectMood(mood) {
+            // 移除所有选中状态
+            document.querySelectorAll('.mood-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            document.querySelector(`.mood-option.${mood}`).classList.add('selected');
+            
+            // 更新记录
+            currentRecord.mood = mood;
+            
+            // 自动保存
+            autoSave();
+        }
+        
+        // 选择亲密
+        function selectLove(hasLove) {
+            // 移除所有选中状态
+            document.querySelectorAll('.love-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            const options = document.querySelectorAll('.love-option');
+            options[hasLove ? 0 : 1].classList.add('selected');
+            
+            // 更新记录
+            currentRecord.love = hasLove;
+            
+            // 自动保存
+            autoSave();
+        }
+        
+        // 记录洗澡时间
+        function recordBathTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            
+            currentRecord.bathTime = timeStr;
+            document.getElementById('bathTime').textContent = timeStr;
+            
+            const btn = document.querySelector('.time-btn[onclick="recordBathTime()"]');
+            btn.classList.add('recorded');
+            btn.textContent = '✅ 已记录';
+            
+            showNotification('🛁 洗澡时间已记录', 'success');
+            
+            // 自动保存
+            autoSave();
+        }
+        
+        // 记录上床时间
+        function recordBedTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            
+            currentRecord.bedTime = timeStr;
+            document.getElementById('bedTime').textContent = timeStr;
+            
+            const btn = document.querySelector('.time-btn[onclick="recordBedTime()"]');
+            btn.classList.add('recorded');
+            btn.textContent = '✅ 已记录';
+            
+            showNotification('🛏️ 上床时间已记录', 'success');
+            
+            // 自动保存
+            autoSave();
+        }
+        
+        // 清空日记
+        function clearDiary() {
+            document.getElementById('diaryInput').value = '';
+            currentRecord.diary = '';
+            showNotification('🗑️ 日记已清空', 'info');
+            
+            // 自动保存
+            autoSave();
+        }
+        
+        // 初始化筛选器
+        function initFilters() {
+            if (records.length === 0) return;
+            
+            // 获取所有年份
+            const years = new Set();
+            records.forEach(record => {
+                const year = new Date(record.date).getFullYear();
+                years.add(year);
+            });
+            
+            // 排序年份（从新到旧）
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
+            
+            const yearSelect = document.getElementById('yearFilter');
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                yearSelect.appendChild(option);
+            });
+        }
+        
+        // 更新月份筛选器
+        function updateMonthFilter(year) {
+            const monthSelect = document.getElementById('monthFilter');
+            monthSelect.innerHTML = '<option value="all">所有月份</option>';
+            
+            if (year === 'all') return;
+            
+            // 获取该年份的所有月份
+            const months = new Set();
+            records.forEach(record => {
+                const recordDate = new Date(record.date);
+                if (recordDate.getFullYear() === parseInt(year)) {
+                    months.add(recordDate.getMonth() + 1); // 1-12
+                }
+            });
+            
+            // 排序月份
+            const sortedMonths = Array.from(months).sort((a, b) => a - b);
+            
+            sortedMonths.forEach(month => {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = `${month}月`;
+                monthSelect.appendChild(option);
+            });
+        }
+        
+        // 更新日期筛选器
+        function updateDayFilter(year, month) {
+            const daySelect = document.getElementById('dayFilter');
+            daySelect.innerHTML = '<option value="all">所有日期</option>';
+            
+            if (year === 'all' || month === 'all') return;
+            
+            // 获取该年月的所有日期
+            const days = new Set();
+            records.forEach(record => {
+                const recordDate = new Date(record.date);
+                if (recordDate.getFullYear() === parseInt(year) && 
+                    (recordDate.getMonth() + 1) === parseInt(month)) {
+                    days.add(recordDate.getDate());
+                }
+            });
+            
+            // 排序日期
+            const sortedDays = Array.from(days).sort((a, b) => a - b);
+            
+            sortedDays.forEach(day => {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = `${day}日`;
+                daySelect.appendChild(option);
+            });
+        }
+        
+        // 筛选历史记录
+        function filterHistory() {
+            const year = document.getElementById('yearFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            const day = document.getElementById('dayFilter').value;
+            
+            selectedYearFilter = year;
+            selectedMonthFilter = month;
+            selectedDayFilter = day;
+            
+            // 更新筛选器选项
+            if (year !== 'all') {
+                updateMonthFilter(year);
+                if (month !== 'all') {
+                    updateDayFilter(year, month);
+                }
+            }
+            
+            // 筛选记录
+            filteredRecords = records.filter(record => {
+                const recordDate = new Date(record.date);
+                const recordYear = recordDate.getFullYear();
+                const recordMonth = recordDate.getMonth() + 1;
+                const recordDay = recordDate.getDate();
+                
+                if (year !== 'all' && recordYear !== parseInt(year)) return false;
+                if (month !== 'all' && recordMonth !== parseInt(month)) return false;
+                if (day !== 'all' && recordDay !== parseInt(day)) return false;
+                
+                return true;
+            });
+            
+            // 重新加载历史记录
+            renderHistoryList();
+        }
+        
+        // 自动保存
+        function autoSave() {
+            // 清除之前的定时器
+            if (saveTimer) {
+                clearTimeout(saveTimer);
+            }
+            
+            // 显示保存状态
+            const statusEl = document.getElementById('autoSaveStatus');
+            statusEl.textContent = '正在保存...';
+            statusEl.style.color = 'var(--warning)';
+            
+            // 设置新的定时器（1秒后保存）
+            saveTimer = setTimeout(() => {
+                saveRecord();
+                statusEl.textContent = '已自动保存';
+                statusEl.style.color = 'var(--success)';
+                
+                // 3秒后恢复原样
+                setTimeout(() => {
+                    statusEl.textContent = '所有更改已自动保存';
+                    statusEl.style.color = '#666';
+                }, 2000);
+            }, 1000);
+        }
+        
+        // 保存记录
+        function saveRecord() {
+            // 验证必填项
+            if (!currentRecord.mood) {
+                return; // 情绪未选择时不保存
+            }
+            
+            if (currentRecord.love === null) {
+                return; // 亲密未选择时不保存
+            }
+            
+            // 获取日记内容
+            currentRecord.diary = document.getElementById('diaryInput').value.trim();
+            
+            // 设置日期
+            currentRecord.date = new Date().toISOString().split('T')[0];
+            
+            // 查找是否已有今天的记录
+            const todayIndex = records.findIndex(r => r.date === currentRecord.date);
+            
+            if (todayIndex >= 0) {
+                // 更新已有记录，保留原有评论
+                const existingRecord = records[todayIndex];
+                records[todayIndex] = { 
+                    ...currentRecord,
+                    comments: existingRecord.comments || []
+                };
+            } else {
+                // 添加新记录，包含空评论数组
+                records.push({ 
+                    ...currentRecord,
+                    comments: []
+                });
+            }
+            
+            // 保存数据
+            saveData();
+            
+            // 更新筛选器
+            initFilters();
+            
+            // 更新历史记录和统计
+            renderHistoryList();
+            updateMonthStats();
+            updateYearStats();
+        }
+        
+        // 切换统计周期
+        function switchPeriod(period) {
+            // 更新标签按钮
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`.period-tab[onclick*="${period}"]`).classList.add('active');
+            
+            // 显示/隐藏年份选择器
+            const yearSelector = document.getElementById('yearSelector');
+            if (period === 'year') {
+                yearSelector.style.display = 'block';
+            } else {
+                yearSelector.style.display = 'none';
+            }
+            
+            // 显示对应内容
+            document.querySelectorAll('.stats-period').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            if (period === 'month') {
+                document.getElementById('monthStats').style.display = 'block';
+                updateMonthStats();
+            } else if (period === 'year') {
+                document.getElementById('yearStats').style.display = 'block';
+                updateYearStats();
+            }
+        }
+        
+        // 切换年份
+        function changeYear(delta) {
+            selectedYear += delta;
+            document.getElementById('selectedYear').textContent = selectedYear;
+            updateYearStats();
+        }
+        
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新标签按钮
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab[onclick*="${tabName}"]`).classList.add('active');
+            
+            // 显示对应内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            document.getElementById(`${tabName}Tab`).style.display = 'block';
+            
+            // 加载对应数据
+            if (tabName === 'history') {
+                loadHistory();
+                // 初始化筛选器
+                initFilters();
+            } else if (tabName === 'stats') {
+                updateMonthStats();
+            }
+        }
+        
+        // 切换统计周期
+        function switchPeriod(period) {
+            // 更新标签按钮
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`.period-tab[onclick*="${period}"]`).classList.add('active');
+            
+            // 显示/隐藏年份选择器
+            const yearSelector = document.getElementById('yearSelector');
+            if (period === 'year') {
+                yearSelector.style.display = 'block';
+            } else {
+                yearSelector.style.display = 'none';
+            }
+            
+            // 显示对应内容
+            document.querySelectorAll('.stats-period').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            if (period === 'month') {
+                document.getElementById('monthStats').style.display = 'block';
+                updateMonthStats();
+            } else if (period === 'year') {
+                document.getElementById('yearStats').style.display = 'block';
+                updateYearStats();
+            }
+        }
+        
+        // 渲染历史记录列表
+        function renderHistoryList() {
+            const historyList = document.getElementById('historyList');
+            
+            // 使用筛选后的记录，如果没有筛选则使用所有记录
+            const displayRecords = filteredRecords.length > 0 ? filteredRecords : records;
+            
+            if (displayRecords.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">暂无历史记录，开始记录吧！</div>';
+                return;
+            }
+            
+            // 按日期排序（最新的在前）
+            const sortedRecords = [...displayRecords].sort((a, b) => {
+                return new Date(b.date) - new Date(a.date);
+            });
+            
+            let html = '';
+            
+            sortedRecords.forEach((record, index) => {
+                const date = new Date(record.date);
+                const dateStr = date.toLocaleDateString('zh-CN', {
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short'
+                });
+                
+                const diaryPreview = record.diary ? 
+                    (record.diary.length > 50 ? record.diary.substring(0, 50) + '...' : record.diary) :
+                    '无日记内容';
+                
+                const isToday = record.date === currentRecord.date;
+                
+                html += `
+                <div class="history-item ${record.mood} ${isToday ? 'today' : ''}" onclick="viewRecord('${record.date}')">
+                    <div class="history-header">
+                        <div class="history-date">
+                            ${dateStr}
+                            ${isToday ? '<span style="color: var(--primary); font-size: 12px;">(今天)</span>' : ''}
+                        </div>
+                        <div class="history-stats">
+                            <span class="mood-badge ${record.mood}">${getMoodText(record.mood)}</span>
+                            ${record.love ? '<span style="color: var(--love);">❤️</span>' : ''}
+                            ${record.comments && record.comments.length > 0 ? 
+                                `<span style="background: var(--info); color: white; padding: 2px 6px; border-radius: 10px; font-size: 12px;">
+                                    💬 ${record.comments.length}
+                                </span>` : 
+                                ''
+                            }
+                        </div>
+                    </div>
+                    <div class="history-preview">${diaryPreview}</div>
+                </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+        }
+        
+        // 加载历史记录
+        function loadHistory() {
+            // 重置筛选
+            filteredRecords = [];
+            selectedYearFilter = 'all';
+            selectedMonthFilter = 'all';
+            selectedDayFilter = 'all';
+            
+            // 重置筛选器
+            document.getElementById('yearFilter').value = 'all';
+            document.getElementById('monthFilter').value = 'all';
+            document.getElementById('dayFilter').value = 'all';
+            
+            // 渲染列表
+            renderHistoryList();
+        }
+        
+        // 查看记录详情
+        function viewRecord(date) {
+            const record = records.find(r => r.date === date);
+            if (!record) return;
+            
+            // 确保有comments数组
+            if (!record.comments) {
+                record.comments = [];
+            }
+            
+            const dateStr = new Date(date).toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            
+            // 设置模态框标题
+            document.getElementById('modalDate').textContent = dateStr;
+            
+            // 构建详情内容
+            let detailHtml = `
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <span class="mood-badge ${record.mood}" style="font-size: 16px;">
+                            ${getMoodText(record.mood)}
+                        </span>
+                        <span style="font-size: 24px;">
+                            ${record.love ? '❤️' : '💙'}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: #333;">时间记录</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">🛁 洗澡时间</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #333;">
+                                ${record.bathTime || '未记录'}
+                            </div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">🛏️ 上床时间</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #333;">
+                                ${record.bedTime || '未记录'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (record.diary) {
+                detailHtml += `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; color: #333;">📝 日记</h4>
+                        <div class="diary-content">
+                            ${record.diary.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 评论部分
+            detailHtml += `
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="color: #333; margin: 0;">💬 评论 (${record.comments.length})</h4>
+                        <button onclick="addComment('${date}')" style="
+                            background: var(--primary);
+                            color: white;
+                            border: none;
+                            padding: 8px 15px;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">
+                            + 添加评论
+                        </button>
+                    </div>
+            `;
+            
+            if (record.comments.length === 0) {
+                detailHtml += `
+                    <div style="text-align: center; padding: 40px; color: #999; font-size: 14px; background: #f8f9fa; border-radius: 12px; border: 1px dashed #e9ecef;">
+                        暂无评论，点击上方按钮添加
+                    </div>
+                `;
+            } else {
+                // 显示评论列表（按时间倒序）
+                const sortedComments = [...record.comments].sort((a, b) => {
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+                });
+                
+                detailHtml += '<div style="max-height: 300px; overflow-y: auto; padding-right: 8px;">';
+                
+                sortedComments.forEach((comment, index) => {
+                    const timeStr = new Date(comment.timestamp).toLocaleString('zh-CN', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                    
+                    detailHtml += `
+                        <div class="comment-item">
+                            <div class="comment-text">
+                                ${comment.text}
+                            </div>
+                            <div class="comment-time">
+                                <span>📅 ${timeStr}</span>
+                                <button onclick="deleteComment('${date}', ${index})" style="
+                                    background: none;
+                                    border: none;
+                                    color: var(--danger);
+                                    cursor: pointer;
+                                    font-size: 12px;
+                                    padding: 4px 8px;
+                                    border-radius: 4px;
+                                    transition: all 0.2s ease;
+                                ">
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                detailHtml += '</div>';
+            }
+            
+            detailHtml += `
+                </div>
+            `;
+            
+            // 设置模态框内容
+            document.getElementById('modalContent').innerHTML = detailHtml;
+            
+            // 显示模态框
+            document.getElementById('recordModal').style.display = 'flex';
+        }
+        
+        // 添加评论
+        function addComment(date) {
+            const commentText = prompt('请输入评论内容：');
+            if (!commentText || commentText.trim() === '') return;
+            
+            const record = records.find(r => r.date === date);
+            if (!record) return;
+            
+            // 确保有comments数组
+            if (!record.comments) {
+                record.comments = [];
+            }
+            
+            // 添加评论（带时间戳）
+            record.comments.push({
+                text: commentText.trim(),
+                timestamp: new Date().toISOString()
+            });
+            
+            // 保存数据
+            saveData();
+            
+            // 重新加载详情
+            viewRecord(date);
+            
+            showNotification('💬 评论已添加', 'success');
+        }
+        
+        // 删除评论
+        function deleteComment(date, commentIndex) {
+            if (!confirm('确定要删除这条评论吗？')) return;
+            
+            const record = records.find(r => r.date === date);
+            if (!record || !record.comments) return;
+            
+            // 删除评论
+            record.comments.splice(commentIndex, 1);
+            
+            // 保存数据
+            saveData();
+            
+            // 重新加载详情
+            viewRecord(date);
+            
+            showNotification('🗑️ 评论已删除', 'info');
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('recordModal').style.display = 'none';
+        }
+        
+        // 点击模态框背景关闭
+        document.getElementById('recordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // 获取情绪文本
+        function getMoodText(mood) {
+            switch(mood) {
+                case 'happy': return '😊 开心';
+                case 'calm': return '😌 平静';
+                case 'argue': return '😠 争吵';
+                case 'cold': return '🥶 冷战';
+                default: return '未知';
+            }
+        }
+        
+        // 更新月度统计
+        function updateMonthStats() {
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth();
+            
+            // 获取当前月份记录
+            const monthRecords = records.filter(r => {
+                const recordDate = new Date(r.date);
+                return recordDate.getFullYear() === currentYear && 
+                       recordDate.getMonth() === currentMonth;
+            });
+            
+            // 计算统计数据
+            const happyDays = monthRecords.filter(r => r.mood === 'happy').length;
+            const loveDays = monthRecords.filter(r => r.love === true).length;
+            const argueDays = monthRecords.filter(r => r.mood === 'argue').length;
+            const recordDays = monthRecords.length;
+            
+            // 更新显示
+            document.getElementById('monthHappyDays').textContent = happyDays;
+            document.getElementById('monthLoveDays').textContent = loveDays;
+            document.getElementById('monthArgueDays').textContent = argueDays;
+            document.getElementById('monthRecordDays').textContent = recordDays;
+            
+            // 更新月度图表
+            updateMonthChart(monthRecords);
+        }
+        
+        // 更新月度图表
+        function updateMonthChart(monthRecords) {
+            const ctx = document.getElementById('monthChart').getContext('2d');
+            
+            // 按日期分组统计各种心情和爱爱
+            const daysInMonth = new Date().getDate();
+            const dailyHappy = new Array(daysInMonth).fill(0);
+            const dailyCalm = new Array(daysInMonth).fill(0);
+            const dailyArgue = new Array(daysInMonth).fill(0);
+            const dailyCold = new Array(daysInMonth).fill(0);
+            const dailyLove = new Array(daysInMonth).fill(0);
+            
+            monthRecords.forEach(record => {
+                const day = new Date(record.date).getDate() - 1;
+                if (day >= 0 && day < daysInMonth) {
+                    // 统计各种心情
+                    if (record.mood === 'happy') dailyHappy[day] = 1;
+                    if (record.mood === 'calm') dailyCalm[day] = 1;
+                    if (record.mood === 'argue') dailyArgue[day] = 1;
+                    if (record.mood === 'cold') dailyCold[day] = 1;
+                    
+                    // 统计爱爱（用2表示，在图表上更高）
+                    if (record.love === true) dailyLove[day] = 2;
+                }
+            });
+            
+            // 生成日期标签
+            const labels = Array.from({length: daysInMonth}, (_, i) => `${i + 1}日`);
+            
+            if (monthChart) {
+                monthChart.destroy();
+            }
+            
+            console.log('创建月度图表，数据集数量:', 5);
+            console.log('开心颜色:', '#4cd964');
+            console.log('平静颜色:', '#5ac8fa');
+            console.log('争吵颜色:', '#ff3b30');
+            console.log('冷战颜色:', '#8e8e93');
+            console.log('爱爱颜色:', '#ff2d95'); // 更鲜艳的粉色
+            
+            monthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '开心',
+                            data: dailyHappy,
+                            borderColor: '#4cd964',
+                            backgroundColor: 'rgba(76, 217, 100, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#4cd964',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: '平静',
+                            data: dailyCalm,
+                            borderColor: '#5ac8fa',
+                            backgroundColor: 'rgba(90, 200, 250, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#5ac8fa',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: '争吵',
+                            data: dailyArgue,
+                            borderColor: '#ff3b30',
+                            backgroundColor: 'rgba(255, 59, 48, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#ff3b30',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: '冷战',
+                            data: dailyCold,
+                            borderColor: '#8e8e93',
+                            backgroundColor: 'rgba(142, 142, 147, 0.2)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#8e8e93',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: '爱爱',
+                            data: dailyLove,
+                            borderColor: '#ff2d95', // 更鲜艳的粉色
+                            backgroundColor: 'rgba(255, 45, 149, 0.2)',
+                            borderWidth: 4,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 7,
+                            pointHoverRadius: 9,
+                            pointStyle: 'star',
+                            pointBackgroundColor: '#ff2d95',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 2.5,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    if (value === 0) return '无';
+                                    if (value === 1) return '有';
+                                    if (value === 2) return '爱爱';
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 更新年度统计
+        function updateYearStats() {
+            // 获取选中年份记录
+            const yearRecords = records.filter(r => {
+                const recordDate = new Date(r.date);
+                return recordDate.getFullYear() === selectedYear;
+            });
+            
+            // 计算统计数据
+            const happyDays = yearRecords.filter(r => r.mood === 'happy').length;
+            const loveDays = yearRecords.filter(r => r.love === true).length;
+            const argueDays = yearRecords.filter(r => r.mood === 'argue').length;
+            const recordDays = yearRecords.length;
+            
+            // 更新显示
+            document.getElementById('yearHappyDays').textContent = happyDays;
+            document.getElementById('yearLoveDays').textContent = loveDays;
+            document.getElementById('yearArgueDays').textContent = argueDays;
+            document.getElementById('yearRecordDays').textContent = recordDays;
+            
+            // 更新年度图表
+            updateYearChart(yearRecords);
+        }
+        
+        // 更新年度图表
+        function updateYearChart(yearRecords) {
+            const ctx = document.getElementById('yearChart').getContext('2d');
+            
+            // 按月份分组统计各种心情和爱爱
+            const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', 
+                               '7月', '8月', '9月', '10月', '11月', '12月'];
+            
+            const monthlyHappy = Array.from({length: 12}, () => 0);
+            const monthlyCalm = Array.from({length: 12}, () => 0);
+            const monthlyArgue = Array.from({length: 12}, () => 0);
+            const monthlyCold = Array.from({length: 12}, () => 0);
+            const monthlyLove = Array.from({length: 12}, () => 0);
+            
+            yearRecords.forEach(record => {
+                const month = new Date(record.date).getMonth();
+                
+                // 统计各种心情
+                if (record.mood === 'happy') monthlyHappy[month]++;
+                if (record.mood === 'calm') monthlyCalm[month]++;
+                if (record.mood === 'argue') monthlyArgue[month]++;
+                if (record.mood === 'cold') monthlyCold[month]++;
+                
+                // 统计爱爱
+                if (record.love === true) monthlyLove[month]++;
+            });
+            
+            if (yearChart) {
+                yearChart.destroy();
+            }
+            
+            console.log('创建年度图表，数据集数量:', 5);
+            console.log('年度图表颜色:', ['#4cd964', '#5ac8fa', '#ff3b30', '#8e8e93', '#ff2d95']);
+            
+            yearChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthNames,
+                    datasets: [
+                        {
+                            label: '开心',
+                            data: monthlyHappy,
+                            backgroundColor: '#4cd964',
+                            borderColor: '#ffffff',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '平静',
+                            data: monthlyCalm,
+                            backgroundColor: '#5ac8fa',
+                            borderColor: '#ffffff',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '争吵',
+                            data: monthlyArgue,
+                            backgroundColor: '#ff3b30',
+                            borderColor: '#ffffff',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '冷战',
+                            data: monthlyCold,
+                            backgroundColor: '#8e8e93',
+                            borderColor: '#ffffff',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '爱爱',
+                            data: monthlyLove,
+                            backgroundColor: '#ff2d95', // 更鲜艳的粉色
+                            borderColor: '#ffffff',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `${selectedYear}年情绪与爱爱分布`,
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            stacked: false
+                        },
+                        x: {
+                            stacked: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 初始化语音识别
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'zh-CN';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = function() {
+                    isRecording = true;
+                    document.getElementById('voiceBtn').classList.add('recording');
+                    document.getElementById('voiceBtn').innerHTML = '<span>🔴</span> 录音中...';
+                    showNotification('🎤 开始录音...', 'info');
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const diaryInput = document.getElementById('diaryInput');
+                    diaryInput.value = transcript;
+                    currentRecord.diary = transcript;
+                    showNotification('✅ 语音识别成功', 'success');
+                    
+                    // 自动保存
+                    autoSave();
+                };
+                
+                recognition.onerror = function(event) {
+                    showNotification('❌ 语音识别失败', 'error');
+                };
+                
+                recognition.onend = function() {
+                    isRecording = false;
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                    document.getElementById('voiceBtn').innerHTML = '<span>🎤</span> 语音输入';
+                };
+            } else {
+                document.getElementById('voiceBtn').style.display = 'none';
+                showNotification('⚠️ 您的浏览器不支持语音输入', 'error');
+            }
+        }
+        
+        // 开始语音输入
+        function startVoiceInput() {
+            if (!recognition) {
+                showNotification('❌ 语音识别未初始化', 'error');
+                return;
+            }
+            
+            if (isRecording) {
+                recognition.stop();
+                return;
+            }
+            
+            try {
+                recognition.start();
+            } catch (error) {
+                showNotification('❌ 无法开始录音', 'error');
+            }
+        }
+        
+        // 显示通知
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const text = document.getElementById('notificationText');
+            
+            // 设置通知内容
+            text.textContent = message;
+            
+            // 设置图标
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: '💡'
+            };
+            icon.textContent = icons[type] || '💡';
+            
+            // 设置样式
+            notification.className = 'notification';
+            notification.classList.add(type);
+            
+            // 显示通知
+            notification.classList.add('show');
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 生成演示数据
+        function generateDemoData() {
+            if (records.length === 0) {
+                // 生成最近30天的演示数据
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    const moods = ['happy', 'calm', 'argue', 'cold'];
+                    const mood = moods[Math.floor(Math.random() * moods.length)];
+                    
+                    const record = {
+                        date: dateStr,
+                        mood: mood,
+                        love: Math.random() > 0.7,
+                        bathTime: Math.random() > 0.5 ? `${Math.floor(Math.random() * 2) + 21}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}` : null,
+                        bedTime: Math.random() > 0.5 ? `${Math.floor(Math.random() * 2) + 23}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}` : null,
+                        diary: Math.random() > 0.3 ? '这是演示数据，可以删除后开始真实记录。' : '',
+                        comments: []
+                    };
+                    
+                    // 为一些记录添加示例评论
+                    if (Math.random() > 0.7) {
+                        const commentTime = new Date(date);
+                        commentTime.setHours(20 + Math.floor(Math.random() * 4));
+                        commentTime.setMinutes(Math.floor(Math.random() * 60));
+                        
+                        record.comments.push({
+                            text: '今天过得很开心！',
+                            timestamp: commentTime.toISOString()
+                        });
+                    }
+                    
+                    records.push(record);
+                }
+                
+                saveData();
+                init();
+                loadHistory();
+                showNotification('📊 演示数据已生成（30天）', 'success');
+            }
+        }
+        
+        // 清空所有数据
+        function clearAllData() {
+            if (confirm('确定要清空所有记录吗？此操作不可恢复！')) {
+                localStorage.removeItem('coupleDiaryAllInOne');
+                records = [];
+                currentRecord = {
+                    mood: null,
+                    love: null,
+                    bathTime: null,
+                    bedTime: null,
+                    diary: '',
+                    date: new Date().toISOString().split('T')[0],
+                    comments: []
+                };
+                // 重置UI
+                document.querySelectorAll('.mood-option').forEach(el => el.classList.remove('selected'));
+                document.querySelectorAll('.love-option').forEach(el => el.classList.remove('selected'));
+                document.getElementById('bathTime').textContent = '未记录';
+                document.getElementById('bedTime').textContent = '未记录';
+                document.getElementById('diaryInput').value = '';
+                document.querySelectorAll('.time-btn').forEach(btn => {
+                    btn.classList.remove('recorded');
+                    if (btn.getAttribute('onclick') === 'recordBathTime()') btn.innerHTML = '⏰ 记录当前时间';
+                    if (btn.getAttribute('onclick') === 'recordBedTime()') btn.innerHTML = '⏰ 记录当前时间';
+                });
+                loadHistory();
+                updateMonthStats();
+                if (monthChart) { monthChart.destroy(); monthChart = null; }
+                if (yearChart) { yearChart.destroy(); yearChart = null; }
+                showNotification('✅ 所有数据已清空，可以开始全新记录！', 'success');
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            
+            // 添加日记输入监听（自动保存）
+            const diaryInput = document.getElementById('diaryInput');
+            diaryInput.addEventListener('input', function() {
+                autoSave();
+            });
+            
+            // 已移除演示数据按钮
+            // 如果需要测试数据，可以取消注释上面的自动生成代码
+        });
+    </script>
+</body>
+</html>
