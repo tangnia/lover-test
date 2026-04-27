@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>💑 家日记</title>
+    <title>💑 家日记测试</title>
     <style>
         :root {
             --primary: #ff6b8b;
@@ -31,11 +31,23 @@
             background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
             min-height: 100vh;
             padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            padding-left: calc(20px + env(safe-area-inset-left));
+            padding-right: calc(20px + env(safe-area-inset-right));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
             margin: 0;
             color: #333;
         }
         
         .container { max-width: 500px; margin: 0 auto; }
+        
+        body.auth-mode .container {
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+        }
         
         .env-badge {
             position: fixed;
@@ -749,12 +761,40 @@
         }
         
         /* 响应式调整 */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-sidebar {
+                width: 100%;
+            }
+            
+            .chart-container-large {
+                height: 240px;
+            }
+            
+            .stats-section {
+                padding: 0.9rem 0.95rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+        
         @media (max-width: 480px) {
-            body { padding: 15px; }
-            .header { padding: 20px; }
-            .record-section, .history-section, .stats-section, .auth-section { padding: 20px; }
+            body {
+                padding: 12px;
+                padding-top: calc(12px + env(safe-area-inset-top));
+                padding-left: calc(12px + env(safe-area-inset-left));
+                padding-right: calc(12px + env(safe-area-inset-right));
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+            .header { padding: 16px; margin-bottom: 16px; }
+            .record-section, .history-section, .auth-section { padding: 16px; }
+            .stats-section { padding: 12px 13px; margin-bottom: 10px; }
             .mood-buttons { grid-template-columns: 1fr; }
             .time-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .section-title { margin-top: 0.8rem; margin-bottom: 0.55rem; }
         }
     </style>
 </head>
@@ -775,7 +815,7 @@
         <div id="appSection" style="display: none;">
             <!-- 头部 -->
             <div class="header">
-                <h1>💑 家日记</h1>
+                <h1>💑 家日记测试</h1>
                 <div class="date" id="currentDate">2026年4月10日 星期五</div>
             </div>
             
@@ -1130,6 +1170,7 @@
         
         // ==================== 认证功能 ====================
         function showAuth() {
+            document.body.classList.add('auth-mode');
             document.getElementById('authSection').style.display = 'block';
             document.getElementById('appSection').style.display = 'none';
             document.getElementById('authTitle').textContent = '登录家日记';
@@ -1140,6 +1181,7 @@
         }
         
         function showApp() {
+            document.body.classList.remove('auth-mode');
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
         }
