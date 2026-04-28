@@ -24,6 +24,8 @@
             --chart-argue: #ff3b30;
             --chart-cold: #8e8e93;
             --chart-love: #ff4d8d;
+            --mood-squall: #E8915C;
+            --mood-squall-soft: #fff2e8;
         }
         
         body {
@@ -93,9 +95,9 @@
         /* 今日记录页面 */
         .record-section {
             background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
+            border-radius: 16px;
+            padding: 16px 16px 14px;
+            margin-bottom: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
         
@@ -109,26 +111,32 @@
             gap: 10px;
         }
         
-        /* 情绪选择 */
+        /* 情绪选择 — 紧凑多列 */
         .mood-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px 8px;
+            margin-bottom: 10px;
         }
         
         .mood-btn {
-            padding: 18px;
+            padding: 8px 10px;
             border: none;
-            border-radius: 15px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            display: inline-flex;
+            flex-direction: row;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
+            flex: 1 1 calc(33.333% - 6px);
+            min-width: calc(33.333% - 6px);
+            max-width: calc(33.333% - 6px);
+            box-sizing: border-box;
         }
         
         .mood-btn:hover { transform: translateY(-2px); }
@@ -146,54 +154,89 @@
         .mood-btn.cold { background: #f0f0f0; color: var(--calm); }
         .mood-btn.cold.active { background: var(--calm); color: white; }
         
-        /* 亲密选择 */
-        .love-section {
-            margin-bottom: 25px;
+        .mood-btn.squall { background: var(--mood-squall-soft); color: var(--mood-squall); }
+        .mood-btn.squall.active { background: var(--mood-squall); color: white; }
+        
+        /* 私密标记 — iOS 设置风格，无显眼文案 */
+        .private-settings {
+            margin-top: 4px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0,0,0,0.06);
         }
         
-        .love-toggle {
+        .settings-group {
+            background: #f2f2f7;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .love-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: #f8f9ff;
-            border-radius: 15px;
+            justify-content: flex-end;
+            padding: 10px 14px;
+            min-height: 44px;
+            box-sizing: border-box;
+            transition: background 0.2s ease;
+        }
+        
+        .love-row-hint {
+            flex: 1;
+            min-height: 1px;
+        }
+        
+        .settings-group:has(#loveSwitch:checked) {
+            background: #e8f5ee;
+        }
+        
+        /* iOS 风格开关 */
+        .ios-switch {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            flex-shrink: 0;
+        }
+        
+        .ios-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        
+        .ios-switch-slider {
+            position: absolute;
+            inset: 0;
+            background: #e9e9ea;
+            border-radius: 31px;
+            transition: background 0.2s ease;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         
-        .love-toggle:hover { background: #f0f2ff; }
-        .love-toggle.active { background: #ffe8f0; }
-        
-        .love-label {
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .love-checkbox {
-            width: 24px;
-            height: 24px;
+        .ios-switch-slider::before {
+            content: '';
+            position: absolute;
+            height: 27px;
+            width: 27px;
+            left: 2px;
+            bottom: 2px;
+            background: white;
             border-radius: 50%;
-            border: 2px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .love-toggle.active .love-checkbox {
-            background: var(--love);
-            border-color: var(--love);
+        .ios-switch input:checked + .ios-switch-slider {
+            background: #34c759;
         }
         
-        .love-toggle.active .love-checkbox::after {
-            content: '✓';
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
+        .ios-switch input:checked + .ios-switch-slider::before {
+            transform: translateX(20px);
+        }
+        
+        .ios-switch input:focus-visible + .ios-switch-slider {
+            outline: 2px solid var(--secondary);
+            outline-offset: 2px;
         }
         
         /* 时间记录 */
@@ -232,48 +275,75 @@
             border-color: var(--primary);
         }
         
-        /* 时间网格和按钮 - 恢复原始样式 */
+        /* 时间 — 单行横排，适合手机 */
         .time-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
-        .time-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .time-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             gap: 8px;
         }
         
-        .time-value {
-            font-size: 24px;
-            font-weight: 700;
+        .time-line {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 8px 10px;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        
+        .time-line-head {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: nowrap;
+            gap: 6px 10px;
+            min-width: 0;
+        }
+        
+        .time-line-ico {
+            font-size: 17px;
+            line-height: 1;
+        }
+        
+        .time-line-name {
+            font-size: 14px;
+            font-weight: 600;
             color: #333;
-            margin-bottom: 15px;
+        }
+        
+        .time-line-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1c1c1e;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .time-line-sub {
+            grid-column: 1 / -1;
+            font-size: 12px;
+            color: #8e8e93;
+            margin: 0;
+            min-height: 0;
+        }
+        
+        .time-line-sub:empty {
+            display: none;
         }
         
         .time-btn {
-            padding: 12px 20px;
+            padding: 8px 14px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .time-btn:hover {
@@ -302,17 +372,7 @@
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
         
-        /* 时长显示 */
-        .duration-display {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 6px;
-            min-height: 0;
-        }
-        
-        .duration-display:empty {
-            display: none;
-        }
+        /* 时长并入 .time-line-sub */
         
         /* 日记输入 */
         .diary-input {
@@ -433,19 +493,7 @@
             height: 300px;
         }
         
-        /* 心情日历样式 */
-        .calendar-day {
-            position: relative;
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 500;
-            color: white;
-        }
+        /* 心情日历样式 — 格子尺寸由网格与 aspect-ratio 决定 */
         
         .day-number {
             position: relative;
@@ -549,24 +597,25 @@
         .legend-dot.calm { background: #7B9FE8; }
         .legend-dot.argue { background: #F5C97A; }
         .legend-dot.cold { background: #B8A8D8; }
+        .legend-dot.squall { background: #E8915C; }
         
         .mood-calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 10px;
+            gap: 2px;
+            margin-top: 8px;
         }
         
         .calendar-day {
             background: #6BC8A0;
-            border-radius: 4px;
+            border-radius: 3px;
             aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 5px;
-            font-size: 12px;
+            padding-top: 4px;
+            font-size: 11px;
             color: rgba(255,255,255,0.9);
             font-weight: 500;
             position: relative;
@@ -770,8 +819,7 @@
             .header { padding: 14px; margin-bottom: 12px; }
             .record-section, .history-section, .auth-section { padding: 16px; }
             .stats-section { padding: 10px 11px; margin-bottom: 8px; }
-            .mood-buttons { grid-template-columns: 1fr; }
-            .time-grid { grid-template-columns: 1fr; }
+            .time-grid { gap: 6px; }
             .section-title { margin-top: 0.8rem; margin-bottom: 0.55rem; }
             .card-title { margin-bottom: 0.5rem; }
             .legend { margin-top: 6px; gap: 6px; }
@@ -779,6 +827,38 @@
             .chart-container-small { height: 130px; }
             .chart-container-scatter { height: 170px; }
             .chart-container-large { height: 200px; }
+        }
+        
+        .donut-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .donut-canvas-wrap {
+            position: relative;
+            width: 132px;
+            height: 132px;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+        
+        .donut-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px 10px;
+            font-size: 11px;
+            color: #636366;
+        }
+        
+        .donut-legend > span {
+            white-space: nowrap;
+        }
+        
+        .legend-moods {
+            gap: 4px 8px !important;
         }
     </style>
 </head>
@@ -812,85 +892,78 @@
             <!-- 今日记录页面 -->
             <div id="recordTab" class="tab-content">
                 <div class="record-section">
-                    <div class="section-title">😊 今日情绪</div>
+                    <div class="section-title" style="margin-top:0;margin-bottom:.5rem">今日情绪</div>
                     <div class="mood-buttons">
-                        <button class="mood-btn happy" onclick="selectMood('happy')">
-                            <span style="font-size: 24px;">😊</span>
-                            <span>开心</span>
+                        <button type="button" class="mood-btn happy" onclick="selectMood('happy')">
+                            <span style="font-size:18px">😊</span><span>开心</span>
                         </button>
-                        <button class="mood-btn calm" onclick="selectMood('calm')">
-                            <span style="font-size: 24px;">😌</span>
-                            <span>平静</span>
+                        <button type="button" class="mood-btn calm" onclick="selectMood('calm')">
+                            <span style="font-size:18px">😌</span><span>平静</span>
                         </button>
-                        <button class="mood-btn argue" onclick="selectMood('argue')">
-                            <span style="font-size: 24px;">😠</span>
-                            <span>争吵</span>
+                        <button type="button" class="mood-btn argue" onclick="selectMood('argue')">
+                            <span style="font-size:18px">😠</span><span>争吵</span>
                         </button>
-                        <button class="mood-btn cold" onclick="selectMood('cold')">
-                            <span style="font-size: 24px;">🥶</span>
-                            <span>冷战</span>
+                        <button type="button" class="mood-btn squall" onclick="selectMood('squall')">
+                            <span style="font-size:18px">🌊</span><span>小风波</span>
+                        </button>
+                        <button type="button" class="mood-btn cold" onclick="selectMood('cold')">
+                            <span style="font-size:18px">🥶</span><span>冷战</span>
                         </button>
                     </div>
-                </div>
-                
-                <div class="record-section">
-                    <div class="section-title">❤️ 亲密时刻</div>
-                    <div class="love-section">
-                        <div class="love-toggle" id="loveToggle" onclick="toggleLove()">
-                            <div class="love-label">
-                                <span style="font-size: 24px;">💙</span>
-                                <span>今日是否有亲密时刻？</span>
+                    <div class="private-settings">
+                        <div class="settings-group">
+                            <div class="love-row" id="loveToggle">
+                                <span class="love-row-hint" aria-hidden="true"></span>
+                                <label class="ios-switch" for="loveSwitch">
+                                    <input type="checkbox" id="loveSwitch" autocomplete="off" onchange="onLoveSwitchChange()" aria-label="备忘标记">
+                                    <span class="ios-switch-slider"></span>
+                                </label>
                             </div>
-                            <div class="love-checkbox"></div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="record-section">
-                    <div class="section-title">⏰ 时间记录</div>
+                    <div class="section-title" style="margin-top:0;margin-bottom:.5rem">时间</div>
                     <div class="time-grid">
-                        <div class="time-card">
-                            <div class="time-label">
-                                <span>🛁</span> 洗澡时间
+                        <div class="time-line">
+                            <div class="time-line-head">
+                                <span class="time-line-ico">🛁</span>
+                                <span class="time-line-name">洗澡</span>
+                                <span class="time-line-val" id="bathTimeDisplay">未记录</span>
                             </div>
-                            <div class="time-value" id="bathTimeDisplay">未记录</div>
                             <input type="time" class="time-field" id="bathTime" style="display: none;">
-                            <button class="time-btn" onclick="recordBathTime()">
-                                ⏰ 记录当前时间
-                            </button>
+                            <button type="button" class="time-btn" id="bathRecordBtn" onclick="recordBathTime()">记录</button>
                         </div>
                         
-                        <div class="time-card">
-                            <div class="time-label">
-                                <span>🛏️</span> 上床时间
+                        <div class="time-line">
+                            <div class="time-line-head">
+                                <span class="time-line-ico">🛏️</span>
+                                <span class="time-line-name">上床</span>
+                                <span class="time-line-val" id="bedTimeDisplay">未记录</span>
                             </div>
-                            <div class="time-value" id="bedTimeDisplay">未记录</div>
                             <input type="time" class="time-field" id="bedTime" style="display: none;">
-                            <button class="time-btn" onclick="recordBedTime()">
-                                ⏰ 记录当前时间
-                            </button>
+                            <button type="button" class="time-btn" id="bedRecordBtn" onclick="recordBedTime()">记录</button>
                         </div>
                         
-                        <div class="time-card">
-                            <div class="time-label">
-                                <span>🚶</span> 散步记录
+                        <div class="time-line">
+                            <div class="time-line-head">
+                                <span class="time-line-ico">🚶</span>
+                                <span class="time-line-name">散步</span>
+                                <span class="time-line-val" id="walkStatusDisplay">未开始</span>
                             </div>
-                            <div class="time-value" id="walkStatusDisplay">未开始</div>
-                            <div class="duration-display" id="walkDurationDisplay"></div>
-                            <button class="time-btn walk-btn" id="walkButton" onclick="toggleWalk()">
-                                🚶 开始散步
-                            </button>
+                            <button type="button" class="time-btn walk-btn" id="walkButton" onclick="toggleWalk()">开始</button>
+                            <div class="time-line-sub" id="walkDurationDisplay"></div>
                         </div>
                         
-                        <div class="time-card">
-                            <div class="time-label">
-                                <span>💪</span> 运动记录
+                        <div class="time-line">
+                            <div class="time-line-head">
+                                <span class="time-line-ico">💪</span>
+                                <span class="time-line-name">运动</span>
+                                <span class="time-line-val" id="exerciseStatusDisplay">未开始</span>
                             </div>
-                            <div class="time-value" id="exerciseStatusDisplay">未开始</div>
-                            <div class="duration-display" id="exerciseDurationDisplay"></div>
-                            <button class="time-btn exercise-btn" id="exerciseButton" onclick="toggleExercise()">
-                                💪 开始运动
-                            </button>
+                            <button type="button" class="time-btn exercise-btn" id="exerciseButton" onclick="toggleExercise()">开始</button>
+                            <div class="time-line-sub" id="exerciseDurationDisplay"></div>
                         </div>
                     </div>
                 </div>
@@ -932,10 +1005,11 @@
                         <div id="moodCalendar" class="mood-calendar">
                             <!-- 日历格子将通过JavaScript动态生成 -->
                         </div>
-                        <div class="legend">
+                        <div class="legend legend-moods">
                             <span><span class="legend-dot happy"></span>开心</span>
                             <span><span class="legend-dot calm"></span>平静</span>
                             <span><span class="legend-dot argue"></span>争吵</span>
+                            <span><span class="legend-dot squall"></span>小风波</span>
                             <span><span class="legend-dot cold"></span>冷战</span>
                             <span><span class="legend-dot love"></span>爱爱</span>
                         </div>
@@ -945,15 +1019,16 @@
                     <div class="stats-sidebar">
                         <div class="stats-section">
                             <div class="card-title">心情占比</div>
-                            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
-                                <div style="position:relative;width:90px;height:90px;flex-shrink:0;margin:0 auto;">
-                                    <canvas id="moodDonut" width="90" height="90"></canvas>
+                            <div class="donut-wrap">
+                                <div class="donut-canvas-wrap">
+                                    <canvas id="moodDonut" width="132" height="132"></canvas>
                                 </div>
-                                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;font-size:12px;">
-                                    <span style="white-space:nowrap;"><span class="legend-dot happy"></span>开心 <span id="happyPercent">0%</span></span>
-                                    <span style="white-space:nowrap;"><span class="legend-dot calm"></span>平静 <span id="calmPercent">0%</span></span>
-                                    <span style="white-space:nowrap;"><span class="legend-dot argue"></span>争吵 <span id="arguePercent">0%</span></span>
-                                    <span style="white-space:nowrap;"><span class="legend-dot cold"></span>冷战 <span id="coldPercent">0%</span></span>
+                                <div class="donut-legend">
+                                    <span><span class="legend-dot happy"></span>开心 <span id="happyPercent">0%</span></span>
+                                    <span><span class="legend-dot calm"></span>平静 <span id="calmPercent">0%</span></span>
+                                    <span><span class="legend-dot argue"></span>争吵 <span id="arguePercent">0%</span></span>
+                                    <span><span class="legend-dot squall"></span>小风波 <span id="squallPercent">0%</span></span>
+                                    <span><span class="legend-dot cold"></span>冷战 <span id="coldPercent">0%</span></span>
                                 </div>
                             </div>
                         </div>
@@ -996,10 +1071,11 @@
                         <div class="chart-container chart-container-large">
                             <canvas id="annualChart"></canvas>
                         </div>
-                        <div class="legend">
+                        <div class="legend legend-moods">
                             <span><span class="legend-dot happy"></span>开心</span>
                             <span><span class="legend-dot calm"></span>平静</span>
                             <span><span class="legend-dot argue"></span>争吵</span>
+                            <span><span class="legend-dot squall"></span>小风波</span>
                             <span><span class="legend-dot cold"></span>冷战</span>
                         </div>
                     </div>
@@ -1335,20 +1411,9 @@
             autoSave();
         }
         
-        function toggleLove() {
-            currentLove = !currentLove;
-            const toggle = document.getElementById('loveToggle');
-            const emoji = toggle.querySelector('span');
-            
-            if (currentLove) {
-                toggle.classList.add('active');
-                emoji.textContent = '❤️';
-            } else {
-                toggle.classList.remove('active');
-                emoji.textContent = '💙';
-            }
-            
-            // 自动保存
+        function onLoveSwitchChange() {
+            const cb = document.getElementById('loveSwitch');
+            currentLove = !!(cb && cb.checked);
             autoSave();
         }
         
@@ -1460,7 +1525,7 @@
                     const timeStr = `${hours}:${minutes}`;
                     
                     document.getElementById('walkStatusDisplay').textContent = `开始: ${timeStr}`;
-                    document.getElementById('walkButton').textContent = '🚶 结束散步';
+                    document.getElementById('walkButton').textContent = '结束';
                     document.getElementById('walkButton').classList.add('active');
                     
                     // 开始计时
@@ -1551,7 +1616,7 @@
                     const timeStr = `${hours}:${minutes}`;
                     
                     document.getElementById('exerciseStatusDisplay').textContent = `开始: ${timeStr}`;
-                    document.getElementById('exerciseButton').textContent = '💪 结束运动';
+                    document.getElementById('exerciseButton').textContent = '结束';
                     document.getElementById('exerciseButton').classList.add('active');
                     
                     // 开始计时
@@ -1850,25 +1915,16 @@
                         }
                     });
                     
-                    // 设置亲密状态
-                    const loveToggle = document.getElementById('loveToggle');
-                    const emoji = loveToggle.querySelector('span');
-                    if (data.love) {
-                        loveToggle.classList.add('active');
-                        emoji.textContent = '❤️';
-                        currentLove = true;
-                    } else {
-                        loveToggle.classList.remove('active');
-                        emoji.textContent = '💙';
-                        currentLove = false;
-                    }
+                    currentLove = !!data.love;
+                    const loveSwitch = document.getElementById('loveSwitch');
+                    if (loveSwitch) loveSwitch.checked = currentLove;
                     
                     // 设置时间
                     if (data.bath_time) {
                         document.getElementById('bathTime').value = data.bath_time;
                         document.getElementById('bathTimeDisplay').textContent = data.bath_time;
                         // 更新按钮状态
-                        const bathBtn = document.querySelector('.time-card:nth-child(1) .time-btn');
+                        const bathBtn = document.getElementById('bathRecordBtn');
                         if (bathBtn) {
                             bathBtn.textContent = '✅ 已记录';
                             bathBtn.classList.add('recorded');
@@ -1879,7 +1935,7 @@
                         document.getElementById('bedTime').value = data.bed_time;
                         document.getElementById('bedTimeDisplay').textContent = data.bed_time;
                         // 更新按钮状态
-                        const bedBtn = document.querySelector('.time-card:nth-child(2) .time-btn');
+                        const bedBtn = document.getElementById('bedRecordBtn');
                         if (bedBtn) {
                             bedBtn.textContent = '✅ 已记录';
                             bedBtn.classList.add('recorded');
@@ -1905,12 +1961,12 @@
                             // 散步进行中
                             document.getElementById('walkStatusDisplay').textContent = `开始: ${data.walk_start_time}`;
                             if (data.walk_started_by === currentUser?.id) {
-                                document.getElementById('walkButton').textContent = '🚶 结束散步';
+                                document.getElementById('walkButton').textContent = '结束';
                                 document.getElementById('walkButton').classList.add('active');
                                 document.getElementById('walkButton').disabled = false;
                                 walkTimer = setInterval(updateWalkDuration, 60000);
                             } else {
-                                document.getElementById('walkButton').textContent = '🚶 进行中';
+                                document.getElementById('walkButton').textContent = '…';
                                 document.getElementById('walkButton').disabled = true;
                             }
                         }
@@ -1934,12 +1990,12 @@
                             // 运动进行中
                             document.getElementById('exerciseStatusDisplay').textContent = `开始: ${data.exercise_start_time}`;
                             if (data.exercise_started_by === currentUser?.id) {
-                                document.getElementById('exerciseButton').textContent = '💪 结束运动';
+                                document.getElementById('exerciseButton').textContent = '结束';
                                 document.getElementById('exerciseButton').classList.add('active');
                                 document.getElementById('exerciseButton').disabled = false;
                                 exerciseTimer = setInterval(updateExerciseDuration, 60000);
                             } else {
-                                document.getElementById('exerciseButton').textContent = '💪 进行中';
+                                document.getElementById('exerciseButton').textContent = '…';
                                 document.getElementById('exerciseButton').disabled = true;
                             }
                         }
@@ -1996,6 +2052,7 @@
                         'happy': '😊',
                         'calm': '😌',
                         'argue': '😠',
+                        'squall': '🌊',
                         'cold': '🥶'
                     }[record.mood] || '📝';
                     
@@ -2003,6 +2060,7 @@
                         'happy': '#4cd964',
                         'calm': '#5ac8fa',
                         'argue': '#ff3b30',
+                        'squall': '#E8915C',
                         'cold': '#8e8e93'
                     }[record.mood] || '#666';
                     
@@ -2065,10 +2123,11 @@
                     'happy': '😊 开心',
                     'calm': '😌 平静',
                     'argue': '😠 争吵',
+                    'squall': '🌊 小风波',
                     'cold': '🥶 冷战'
                 }[data.mood] || '未知';
                 
-                const loveText = data.love ? '❤️ 有亲密' : '💙 无亲密';
+                const loveText = data.love ? '已标记' : '未标记';
                 
                 let details = `
                     <div style="margin-bottom: 20px;">
@@ -2079,7 +2138,7 @@
                                 <div style="font-size: 16px; font-weight: 600;">${moodText}</div>
                             </div>
                             <div style="padding: 12px; background: #f8f9fa; border-radius: 10px;">
-                                <div style="font-size: 12px; color: #666;">亲密</div>
+                                <div style="font-size: 12px; color: #666;">备忘</div>
                                 <div style="font-size: 16px; font-weight: 600;">${loveText}</div>
                             </div>
                         </div>
@@ -2291,6 +2350,7 @@
                 happy: '#6BC8A0',
                 calm: '#7B9FE8',
                 argue: '#F5C97A',
+                squall: '#E8915C',
                 cold: '#B8A8D8'
             };
             
@@ -2301,7 +2361,7 @@
             const firstDayOffset = new Date(selectedYear, currentMonth - 1, 1).getDay();
             
             // 模拟当月数据
-            const moodPattern = ['happy', 'calm', 'argue', 'happy', 'cold', 'calm', 'happy'];
+            const moodPattern = ['happy', 'calm', 'squall', 'argue', 'happy', 'cold', 'calm'];
             const moodData = Array.from({ length: daysInMonth }, (_, i) => moodPattern[i % moodPattern.length]);
             
             const loveDays = [4, 13, 18, 19, 27];
@@ -2332,13 +2392,14 @@
             const ctx = document.getElementById('moodDonut').getContext('2d');
             
             // 模拟数据 - 确保总和为100%
-            const data = [42, 25, 20, 13];
+            const data = [32, 22, 14, 12, 20];
             
             // 更新百分比显示
             document.getElementById('happyPercent').textContent = data[0] + '%';
             document.getElementById('calmPercent').textContent = data[1] + '%';
             document.getElementById('arguePercent').textContent = data[2] + '%';
-            document.getElementById('coldPercent').textContent = data[3] + '%';
+            document.getElementById('squallPercent').textContent = data[3] + '%';
+            document.getElementById('coldPercent').textContent = data[4] + '%';
             
             // 如果已经有图表，先销毁 - 修复：检查是否是函数
             if (window.moodDonutChart && typeof window.moodDonutChart.destroy === 'function') {
@@ -2351,10 +2412,10 @@
             window.moodDonutChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['开心', '平静', '争吵', '冷战'],
+                    labels: ['开心', '平静', '争吵', '小风波', '冷战'],
                     datasets: [{
                         data: data,
-                        backgroundColor: ['#6BC8A0', '#7B9FE8', '#F5C97A', '#B8A8D8'],
+                        backgroundColor: ['#6BC8A0', '#7B9FE8', '#F5C97A', '#E8915C', '#B8A8D8'],
                         borderWidth: 2,
                         borderColor: '#fff',
                         hoverOffset: 4
@@ -2363,7 +2424,7 @@
                 options: {
                     responsive: false, // 禁用响应式，避免无限循环
                     maintainAspectRatio: false,
-                    cutout: '68%',
+                    cutout: '62%',
                     plugins: {
                         legend: { display: false }
                     },
@@ -2697,10 +2758,11 @@
             // 模拟数据
             const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
             const intimate = [3, 2, 5, 3, 6, 4, 7, 9, 3, 10, 3, 3];
-            const happyD = [12, 8, 14, 10, 16, 12, 18, 20, 10, 22, 12, 10];
-            const calmD = [8, 6, 8, 7, 6, 8, 5, 5, 7, 4, 8, 9];
-            const argueD = [5, 8, 4, 7, 4, 6, 4, 3, 8, 2, 6, 7];
-            const coldD = [5, 6, 4, 6, 4, 4, 3, 3, 5, 2, 4, 4];
+            const happyD = [10, 7, 12, 9, 14, 10, 15, 17, 9, 18, 10, 9];
+            const calmD = [7, 5, 7, 6, 5, 7, 4, 4, 6, 3, 7, 8];
+            const argueD = [4, 7, 3, 6, 3, 5, 3, 3, 7, 2, 5, 6];
+            const squallD = [3, 4, 3, 4, 3, 3, 3, 2, 4, 2, 3, 3];
+            const coldD = [4, 5, 3, 5, 3, 3, 3, 2, 4, 2, 3, 3];
             
             // 创建自定义插件来显示爱爱次数（灰色文字）
             const intimateLabelsPlugin = {
@@ -2724,7 +2786,7 @@
                     months.forEach((_, i) => {
                         const bar = meta.data[i];
                         if (!bar) return;
-                        const total = happyD[i] + calmD[i] + argueD[i] + coldD[i];
+                        const total = happyD[i] + calmD[i] + argueD[i] + squallD[i] + coldD[i];
                         const topY = chart.scales.y.getPixelForValue(total);
                         ctx.fillText(intimate[i], bar.x, topY - 3);
                     });
@@ -2741,6 +2803,7 @@
                         { label: '开心', data: happyD, backgroundColor: '#6BC8A0', stack: 'mood' },
                         { label: '平静', data: calmD, backgroundColor: '#7B9FE8', stack: 'mood' },
                         { label: '争吵', data: argueD, backgroundColor: '#F5C97A', stack: 'mood' },
+                        { label: '小风波', data: squallD, backgroundColor: '#E8915C', stack: 'mood' },
                         { label: '冷战', data: coldD, backgroundColor: '#B8A8D8', stack: 'mood' }
                     ]
                 },
@@ -2755,8 +2818,7 @@
                     scales: {
                         x: { stacked: true, grid: { display: false }, ticks: { autoSkip: false } },
                         y: { 
-                            stacked: true, 
-                            max: 38, 
+                            stacked: true,
                             grid: { color: 'rgba(0,0,0,0.06)' },
                             title: {
                                 display: true,
