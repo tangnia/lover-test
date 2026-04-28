@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>💑 家日记测试</title>
+    <title>💑 家日记</title>
     <style>
         :root {
             --primary: #ff6b8b;
@@ -935,7 +935,7 @@
         <div id="appSection" style="display: none;">
             <!-- 头部 -->
             <div class="header">
-                <h1>💑 家日记测试</h1>
+                <h1 id="appMainTitle">💑 家日记</h1>
                 <div class="date" id="currentDate">2026年4月10日 星期五</div>
             </div>
             
@@ -1250,7 +1250,7 @@
         let isRecording = false;
         let saveTimer = null;
         let exerciseChartRenderToken = 0;
-        const USE_DEMO_STATS_DATA = true;
+        const USE_DEMO_STATS_DATA = false;
         
         // 散步和运动状态
         let walkStartTime = null;
@@ -1264,6 +1264,7 @@
         
         // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', async function() {
+            applySiteBranding();
             updateDate();
             
             // 检查用户登录状态
@@ -1454,6 +1455,13 @@
                 weekday: 'long' 
             };
             document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
+        }
+        
+        function applySiteBranding() {
+            const appName = isTestSite ? '家日记测试' : '家日记';
+            document.title = `💑 ${appName}`;
+            const titleEl = document.getElementById('appMainTitle');
+            if (titleEl) titleEl.textContent = `💑 ${appName}`;
         }
         
         function switchTab(tabName) {
