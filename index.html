@@ -1142,9 +1142,37 @@
     
     <script>
         // ==================== Supabase 配置 ====================
-        // 已配置用户提供的 Supabase 项目
-        const SUPABASE_URL = 'https://yjhruryippuddqatkibt.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_990BHVgXkZGTxQgOiWURAA_5ab6EZmT';
+        // 按域名自动切换：lover => prod；lover-test => test
+        const SUPABASE_CONFIG = {
+            prod: {
+                url: 'https://yjhruryippuddqatkibt.supabase.co',
+                anonKey: 'sb_publishable_990BHVgXkZGTxQgOiWURAA_5ab6EZmT'
+            },
+            test: {
+                // TODO: 请替换为测试库 Supabase 项目
+                url: '',
+                anonKey: ''
+            }
+        };
+
+        const host = window.location.hostname || '';
+        const path = window.location.pathname || '';
+        const isTestSite = host.includes('lover-test') || path.includes('/lover-test/');
+        const selectedConfig = isTestSite ? SUPABASE_CONFIG.test : SUPABASE_CONFIG.prod;
+        const hasSelectedConfig = !!(selectedConfig.url && selectedConfig.anonKey);
+
+        // 若测试站未配置 test 库，则回退到 prod 并给出明显告警，避免误以为已隔离
+        const runtimeConfig = hasSelectedConfig ? selectedConfig : SUPABASE_CONFIG.prod;
+        const SUPABASE_URL = runtimeConfig.url;
+        const SUPABASE_ANON_KEY = runtimeConfig.anonKey;
+        const CURRENT_DB_ENV = (isTestSite && hasSelectedConfig) ? 'test' : 'prod';
+        window.__DB_ENV__ = CURRENT_DB_ENV;
+        if (isTestSite && !hasSelectedConfig) {
+            console.warn('[DB] lover-test 未配置独立 Supabase，当前仍在使用 PROD 数据库');
+            setTimeout(() => {
+                alert('警告：当前是测试站，但还未配置测试库 Supabase，正在写入生产数据库。请先填写 SUPABASE_CONFIG.test。');
+            }, 0);
+        }
         
         // 初始化 Supabase 客户端（禁用 schema 缓存）
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
